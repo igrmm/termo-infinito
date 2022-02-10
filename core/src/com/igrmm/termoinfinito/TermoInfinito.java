@@ -2,6 +2,7 @@ package com.igrmm.termoinfinito;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -47,9 +48,10 @@ public class TermoInfinito extends ApplicationAdapter {
 
 		for (int key = 0; key < KEYS.length; key++) {
 			final TextButton keyButton = new TextButton(KEYS[key], skin);
-			keyButton.getLabel().setFontScale(3f);
-			float btnSize = 0.08f * Gdx.graphics.getWidth();
-			float btnPad = 0.008f * Gdx.graphics.getWidth();
+//			keyButton.getLabel().setFontScale(3f);
+			float btnWidth = 0.08f * Gdx.graphics.getWidth();
+			float btnHeight = btnWidth * 1.4f;
+			float btnPad = 0.002f * Gdx.graphics.getWidth();
 
 			keyButton.addListener(new ClickListener() {
 				@Override
@@ -60,25 +62,56 @@ public class TermoInfinito extends ApplicationAdapter {
 
 			//to P
 			if (key <= Arrays.asList(KEYS).indexOf("P")) {
-				firstRow.add(keyButton).width(btnSize).height(btnSize * 1.3f).pad(btnPad);
+				//add keys
+				firstRow.add(keyButton).width(btnWidth).height(btnHeight).pad(btnPad);
+
 				if (key == Arrays.asList(KEYS).indexOf("P")) {
+					// expand space at the end of row
+					firstRow.add(new Actor()).expandX();
+
+					//add row
 					keyboardTable.add(firstRow).grow().row();
 				}
 			}
 
 			//to <=
 			if (key > Arrays.asList(KEYS).indexOf("P") && key <= Arrays.asList(KEYS).indexOf("<=")) {
-				secondRow.add(keyButton).width(btnSize).height(btnSize * 1.3f).pad(btnPad);
+				if (key == Arrays.asList(KEYS).indexOf("A"))
+					//add offset on second row
+					secondRow.add(new Actor()).width(btnWidth / 2f).pad(btnPad);
+
+				//add keys
+				secondRow.add(keyButton).width(btnWidth).height(btnHeight).pad(btnPad);
+
+				if (key == Arrays.asList(KEYS).indexOf("L"))
+					//add space between L and <=
+					secondRow.add(new Actor()).width(btnWidth).height(btnHeight).pad(btnPad);
+
 				if (key == Arrays.asList(KEYS).indexOf("<="))
+					//add row
 					keyboardTable.add(secondRow).grow().row();
 			}
 
 			//to enter
 			if (key > Arrays.asList(KEYS).indexOf("<=")) {
 				if (key == Arrays.asList(KEYS).indexOf("ENTER")) {
-					thirdRow.add(keyButton).width(2f * btnSize).height(btnSize * 1.3f).pad(btnPad);
+					//add space between M and ENTER
+					thirdRow.add(new Actor()).expandX();
+
+					//add ENTER key
+					thirdRow.add(keyButton).width(btnWidth * 2f).height(btnHeight).pad(btnPad);
+
+					//add row
 					keyboardTable.add(thirdRow).grow();
-				} else thirdRow.add(keyButton).width(btnSize).height(btnSize * 1.3f).pad(btnPad);
+
+				} else {
+					if (key == Arrays.asList(KEYS).indexOf("Z"))
+						//add offset on third row
+						thirdRow.add(new Actor()).width(btnWidth).pad(btnPad);
+
+					//add keys
+					thirdRow.add(keyButton).width(btnWidth).height(btnHeight).pad(btnPad);
+				}
 			}
 		}
 		root.add(keyboardTable);
