@@ -30,6 +30,7 @@ public class TermoInfinito extends ApplicationAdapter {
 
 	@Override
 	public void create() {
+		//make cool font
 		FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
 		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 		parameter.size = 70;
@@ -64,6 +65,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		TextureRegionDrawable nextWordColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.dispose();
 
+		//make stage and root table
 		stage = new Stage(new ScreenViewport());
 		Table root = new Table();
 		root.setBackground(backgroundColor);
@@ -71,7 +73,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		stage.addActor(root);
 		Gdx.input.setInputProcessor(stage);
 
-		//title
+		//make title
 		Table titleTable = new Table();
 		Label.LabelStyle labelStyle = new Label.LabelStyle();
 		labelStyle.font = font;
@@ -79,7 +81,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		titleTable.add(titleLabel);
 		root.add(titleTable).row();
 
-		//words
+		//make word attempts
 		Table wordsTable = new Table();
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 5; j++) {
@@ -107,7 +109,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		}
 		root.add(wordsTable).grow().row();
 
-		//keyboard
+		//make keyboard
 		Table keyboardTable = new Table();
 		Table firstRow = new Table();
 		Table secondRow = new Table();
