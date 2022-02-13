@@ -2,6 +2,7 @@ package com.igrmm.termoinfinito;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -16,26 +17,52 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 
 public class TermoInfinito extends ApplicationAdapter {
 	public static final String[] KEYS = {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H",
 			"J", "K", "L", "<=", "Z", "X", "C", "V", "B", "N", "M", "ENTER"};
+	public static final int WORD_MAX = 6;
+	public static final int LETTER_MAX = 5;
+
 	private Stage stage;
 	private BitmapFont font;
 	private final Map<Integer, Map<Integer, TextButton>> attempts = new HashMap<>();
-	private int wordAttempt, letterAttempt;
+	private final List<String> wonWords = new ArrayList<>();
+	private final List<String> newWords = new ArrayList<>();
+	private int currentWordAttempt, currentLetterAttempt;
+	private String currentWord;
+	private Label wrongWordLabel;
+	private float wrongWordTimer;
 
 	@Override
 	public void create() {
+		//make wordlists
+		ArrayList<String> wordlist = new ArrayList<>();
+		FileHandle handle = Gdx.files.internal("5wordlist");
+		String text = handle.readString();
+		Collections.addAll(wordlist, text.split("\\r?\\n"));
+		handle = Gdx.files.external("newWords");
+		if (!handle.exists()) {
+			handle.writeString(text, false);
+		} else {
+			text = handle.readString();
+		}
+		Collections.addAll(newWords, text.split("\\r?\\n"));
+		currentWord = newWords.get(new Random().nextInt(newWords.size()));
+
 		//make cool font
 		FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
 		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 		parameter.size = 70;
 		font = fontGenerator.generateFont(parameter);
 		fontGenerator.dispose();
+
+		//make label style with cool font and wrong word label
+		final Label.LabelStyle labelStyle = new Label.LabelStyle();
+		labelStyle.font = font;
+		wrongWordLabel = new Label("Palavra inválida!", labelStyle);
 
 		//make colors
 		Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -44,7 +71,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		TextureRegionDrawable backgroundColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(189f / 255, 147f / 255, 249f / 255, 1f);
 		pixmap.fill();
-		TextureRegionDrawable keyColor = new TextureRegionDrawable(new Texture(pixmap));
+		final TextureRegionDrawable keyColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(255f / 255, 121f / 255, 198f / 255, 1f);
 		pixmap.fill();
 		TextureRegionDrawable keyPressedColor = new TextureRegionDrawable(new Texture(pixmap));
@@ -59,7 +86,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		TextureRegionDrawable yellowColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(139f / 255, 233f / 255, 253f / 255, 1f);
 		pixmap.fill();
-		TextureRegionDrawable currentWordColor = new TextureRegionDrawable(new Texture(pixmap));
+		final TextureRegionDrawable currentWordColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(98f / 255, 114f / 255, 164f / 255, 1f);
 		pixmap.fill();
 		TextureRegionDrawable nextWordColor = new TextureRegionDrawable(new Texture(pixmap));
@@ -67,17 +94,15 @@ public class TermoInfinito extends ApplicationAdapter {
 
 		//make stage and root table
 		stage = new Stage(new ScreenViewport());
-		Table root = new Table();
+		final Table root = new Table();
 		root.setBackground(backgroundColor);
 		root.setFillParent(true);
 		stage.addActor(root);
 		Gdx.input.setInputProcessor(stage);
 
 		//make title
-		Table titleTable = new Table();
-		Label.LabelStyle labelStyle = new Label.LabelStyle();
-		labelStyle.font = font;
-		Label titleLabel = new Label("Termo Inifinito", labelStyle);
+		final Table titleTable = new Table();
+		final Label titleLabel = new Label("Termo Inifinito", labelStyle);
 		titleTable.add(titleLabel);
 		root.add(titleTable).row();
 
@@ -105,6 +130,17 @@ public class TermoInfinito extends ApplicationAdapter {
 				TextButton textButton = new TextButton(" ", textButtonStyle);
 				wordsTable.add(textButton).size(btnSize).pad(btnPad);
 				if (j == 4) wordsTable.row();
+
+				//add attempt buttons to hashmap
+				Map<Integer, TextButton> wordAttempt;
+				if (attempts.containsKey(i)) {
+					wordAttempt = attempts.get(i);
+					wordAttempt.put(j, textButton);
+				} else {
+					wordAttempt = new HashMap<>();
+					wordAttempt.put(j, textButton);
+					attempts.put(i, wordAttempt);
+				}
 			}
 		}
 		root.add(wordsTable).grow().row();
@@ -130,7 +166,44 @@ public class TermoInfinito extends ApplicationAdapter {
 			keyButton.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					System.out.println(keyButton.getLabel().getText());
+					String key = String.valueOf(keyButton.getLabel().getText());
+					TextButton textButton;
+
+					//PRESS BACKSPACE
+					if (key.equals("<=")) {
+						if (currentLetterAttempt > 0) {
+							if (currentLetterAttempt < LETTER_MAX) {
+								textButton = attempts.get(currentWordAttempt).get(currentLetterAttempt);
+								textButton.getStyle().up = currentWordColor;
+							}
+							currentLetterAttempt--;
+							textButton = attempts.get(currentWordAttempt).get(currentLetterAttempt);
+							textButton.setText(" ");
+							textButton.getStyle().up = keyColor;
+						}
+
+						//PRESS ENTER
+					} else if (key.equals("ENTER")) {
+						//TO DO
+						wrongWordLabel.setPosition(
+								Gdx.graphics.getWidth() / 2f - wrongWordLabel.getWidth() / 2f,
+								Gdx.graphics.getHeight() - wrongWordLabel.getHeight() - titleLabel.getHeight()
+						);
+						stage.addActor(wrongWordLabel);
+
+						//PRESS OTHER KEYS
+					} else {
+						if (currentLetterAttempt < LETTER_MAX) {
+							textButton = attempts.get(currentWordAttempt).get(currentLetterAttempt);
+							textButton.setText(String.valueOf(keyButton.getLabel().getText()));
+							textButton.getStyle().up = currentWordColor;
+							currentLetterAttempt++;
+							if (currentLetterAttempt < LETTER_MAX) {
+								textButton = attempts.get(currentWordAttempt).get(currentLetterAttempt);
+								textButton.getStyle().up = keyColor;
+							}
+						}
+					}
 				}
 			});
 
@@ -194,9 +267,16 @@ public class TermoInfinito extends ApplicationAdapter {
 
 	@Override
 	public void render() {
+		//remove wrong word notification
+		wrongWordTimer += Gdx.graphics.getDeltaTime();
+		if (wrongWordTimer > 1.5f) {
+			wrongWordLabel.remove();
+			wrongWordTimer = 0f;
+		}
+
 		ScreenUtils.clear(Color.CLEAR);
 		stage.getViewport().apply();
-		stage.act(Gdx.graphics.getDeltaTime());
+		stage.act();
 		stage.draw();
 	}
 
