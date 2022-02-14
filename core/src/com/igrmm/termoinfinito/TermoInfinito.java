@@ -39,17 +39,16 @@ public class TermoInfinito extends ApplicationAdapter {
 	@Override
 	public void create() {
 		//make wordlists
-		ArrayList<String> wordlist = new ArrayList<>();
-		FileHandle handle = Gdx.files.internal("5wordlist");
-		String text = handle.readString();
-		Collections.addAll(wordlist, text.split("\\r?\\n"));
-		handle = Gdx.files.local("newWords");
-		if (!handle.exists()) {
-			handle.writeString(text, false);
+		String words;
+		FileHandle newWordsFileHandle = Gdx.files.local("newWords");
+		if (!newWordsFileHandle.exists()) {
+			FileHandle wordListFileHandle = Gdx.files.internal("5wordlist");
+			words = wordListFileHandle.readString("UTF-8");
+			newWordsFileHandle.writeString(words, false);
 		} else {
-			text = handle.readString();
+			words = newWordsFileHandle.readString("UTF-8");
 		}
-		Collections.addAll(newWords, text.split("\\r?\\n"));
+		Collections.addAll(newWords, words.split("\\r?\\n"));
 		currentWord = newWords.get(new Random().nextInt(newWords.size()));
 
 		//make cool font
