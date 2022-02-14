@@ -43,7 +43,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		FileHandle handle = Gdx.files.internal("5wordlist");
 		String text = handle.readString();
 		Collections.addAll(wordlist, text.split("\\r?\\n"));
-		handle = Gdx.files.external("newWords");
+		handle = Gdx.files.local("newWords");
 		if (!handle.exists()) {
 			handle.writeString(text, false);
 		} else {
