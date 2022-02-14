@@ -108,8 +108,8 @@ public class TermoInfinito extends ApplicationAdapter {
 
 		//make word attempts
 		Table wordsTable = new Table();
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 5; j++) {
+		for (int i = 0; i < WORD_MAX; i++) {
+			for (int j = 0; j < LETTER_MAX; j++) {
 				TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
 				textButtonStyle.font = font;
 
