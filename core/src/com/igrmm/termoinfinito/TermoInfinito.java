@@ -190,6 +190,7 @@ public class TermoInfinito extends ApplicationAdapter {
 								Gdx.graphics.getHeight() - wrongWordLabel.getHeight() - titleLabel.getHeight()
 						);
 						stage.addActor(wrongWordLabel);
+						wrongWordTimer = 1.5f;
 
 						//PRESS OTHER KEYS
 					} else {
@@ -213,7 +214,6 @@ public class TermoInfinito extends ApplicationAdapter {
 				firstRow.add(keyButton).width(btnWidth).height(btnHeight).pad(btnPad);
 
 				if (key == Arrays.asList(KEYS).indexOf("P")) {
-					textButtonStyle.up = yellowColor;
 					// expand space at the end of row
 					firstRow.add(new Actor()).expandX();
 
@@ -268,8 +268,9 @@ public class TermoInfinito extends ApplicationAdapter {
 	@Override
 	public void render() {
 		//remove wrong word notification
-		wrongWordTimer += Gdx.graphics.getDeltaTime();
-		if (wrongWordTimer > 1.5f) {
+		if (wrongWordTimer > 0f) {
+			wrongWordTimer -= Gdx.graphics.getDeltaTime();
+		} else {
 			wrongWordLabel.remove();
 			wrongWordTimer = 0f;
 		}
