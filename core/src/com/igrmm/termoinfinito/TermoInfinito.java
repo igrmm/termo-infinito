@@ -51,7 +51,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		}
 		Collections.addAll(newWords, words.split("\\r?\\n"));
 		currentWord = newWords.get(new Random().nextInt(newWords.size()));
-		System.out.println(currentWord);
+		System.out.println(getCurrentWordWithoutLatinChar(currentWord));
 
 		//make cool font
 		FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
@@ -251,10 +251,12 @@ public class TermoInfinito extends ApplicationAdapter {
 							for (TextButton letterButton : letterAttemptButtons.values()) {
 								wordAttempt = wordAttempt.concat(String.valueOf(letterButton.getLabel().getText()));
 							}
+
 							wordAttempt = wordAttempt.toLowerCase();
+							String currentWordWithoutLatinChar = getCurrentWordWithoutLatinChar(currentWord);
 
 							//WIN CONDITION
-							if (currentWord.equals(wordAttempt)) {
+							if (currentWordWithoutLatinChar.equals(wordAttempt)) {
 								wrongWordLabel.setText("Palavra certa!");
 								wrongWordTimer = 1.5f;
 								currentWord = newWords.get(new Random().nextInt(newWords.size()));
@@ -271,7 +273,7 @@ public class TermoInfinito extends ApplicationAdapter {
 											letterAttemptButtons.get(i).getStyle().fontColor = wrongKeyFontColor;
 										}
 
-										if (wordAttempt.charAt(i) == currentWord.charAt(j)) {
+										if (wordAttempt.charAt(i) == currentWordWithoutLatinChar.charAt(j)) {
 											letterAttemptButtons.get(i).getStyle().fontColor = keyFontColor;
 											if (i == j) {
 												letterAttemptButtons.get(i).getStyle().up = greenKeyDrawableColor;
@@ -317,6 +319,17 @@ public class TermoInfinito extends ApplicationAdapter {
 			});
 		}
 		root.add(keyboardTable);
+	}
+
+	public String getCurrentWordWithoutLatinChar(String currentWord) {
+		String currentWordWithoutLatinChar = currentWord.replaceAll("[áâã]", "a");
+		currentWordWithoutLatinChar = currentWordWithoutLatinChar.replaceAll("[éê]", "e");
+		currentWordWithoutLatinChar = currentWordWithoutLatinChar.replace("í", "i");
+		currentWordWithoutLatinChar = currentWordWithoutLatinChar.replaceAll("[óô]", "o");
+		currentWordWithoutLatinChar = currentWordWithoutLatinChar.replace("ú", "u");
+		currentWordWithoutLatinChar = currentWordWithoutLatinChar.replace("ç", "c");
+
+		return currentWordWithoutLatinChar;
 	}
 
 	@Override
