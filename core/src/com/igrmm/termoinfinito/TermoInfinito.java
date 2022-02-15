@@ -27,7 +27,8 @@ public class TermoInfinito extends ApplicationAdapter {
 	public static final int WORD_MAX = 6;
 	public static final int LETTER_MAX = 5;
 
-	private Stage stage;
+	private Stage gameStage;
+	private Stage statisticsStage;
 	private BitmapFont font;
 	private final Map<Integer, Map<Integer, TextButton>> attempts = new HashMap<>();
 	private final List<String> wonWords = new ArrayList<>();
@@ -91,13 +92,21 @@ public class TermoInfinito extends ApplicationAdapter {
 		final TextureRegionDrawable nextWordDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.dispose();
 
-		//make stage and root table
-		stage = new Stage(new ScreenViewport());
-		final Table root = new Table();
-		root.setBackground(backgroundDrawableColor);
-		root.setFillParent(true);
-		stage.addActor(root);
-		Gdx.input.setInputProcessor(stage);
+		//make statisticsStage
+		statisticsStage = new Stage(new ScreenViewport());
+		final Table statisticsRoot = new Table();
+		statisticsRoot.setBackground(keyUpDrawableColor);
+		statisticsRoot.setFillParent(true);
+		statisticsStage.addActor(statisticsRoot);
+//		statisticsRoot.add(new Label("STATISTICS", new Label.LabelStyle()));
+
+		//make gameStage and gameRoot table
+		gameStage = new Stage(new ScreenViewport());
+		final Table gameRoot = new Table();
+		gameRoot.setBackground(backgroundDrawableColor);
+		gameRoot.setFillParent(true);
+		gameStage.addActor(gameRoot);
+		Gdx.input.setInputProcessor(gameStage);
 
 		//make title and wrong word label
 		final Label.LabelStyle labelStyle = new Label.LabelStyle();
@@ -106,7 +115,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		final Table titleTable = new Table();
 		final Label titleLabel = new Label("Termo Inifinito", labelStyle);
 		titleTable.add(titleLabel);
-		root.add(titleTable).row();
+		gameRoot.add(titleTable).row();
 		wrongWordLabel = new Label("Palavra inválida!", labelStyle);
 		wrongWordLabel.setPosition(
 				Gdx.graphics.getWidth() / 2f - wrongWordLabel.getWidth() / 2f,
@@ -150,7 +159,7 @@ public class TermoInfinito extends ApplicationAdapter {
 				}
 			}
 		}
-		root.add(wordsTable).grow().row();
+		gameRoot.add(wordsTable).grow().row();
 
 		//make keyboard
 		Table keyboardTable = new Table();
@@ -292,13 +301,13 @@ public class TermoInfinito extends ApplicationAdapter {
 
 								//WORD IS NOT VALID
 							} else {
-								stage.addActor(wrongWordLabel);
+								gameStage.addActor(wrongWordLabel);
 								wrongWordTimer = 1.5f;
 							}
 
 						} else {
 							//words must have 5 letters
-							stage.addActor(wrongWordLabel);
+							gameStage.addActor(wrongWordLabel);
 							wrongWordTimer = 1.5f;
 						}
 
@@ -318,7 +327,7 @@ public class TermoInfinito extends ApplicationAdapter {
 				}
 			});
 		}
-		root.add(keyboardTable);
+		gameRoot.add(keyboardTable);
 	}
 
 	public String getCurrentWordWithoutLatinChar(String currentWord) {
@@ -343,19 +352,19 @@ public class TermoInfinito extends ApplicationAdapter {
 		}
 
 		ScreenUtils.clear(Color.CLEAR);
-		stage.getViewport().apply();
-		stage.act();
-		stage.draw();
+		gameStage.getViewport().apply();
+		gameStage.act();
+		gameStage.draw();
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		stage.getViewport().update(width, height, true);
+		gameStage.getViewport().update(width, height, true);
 	}
 
 	@Override
 	public void dispose() {
-		stage.dispose();
+		gameStage.dispose();
 		font.dispose();
 	}
 }
