@@ -58,11 +58,6 @@ public class TermoInfinito extends ApplicationAdapter {
 		font = fontGenerator.generateFont(parameter);
 		fontGenerator.dispose();
 
-		//make label style with cool font and wrong word label
-		final Label.LabelStyle labelStyle = new Label.LabelStyle();
-		labelStyle.font = font;
-		wrongWordLabel = new Label("Palavra inválida!", labelStyle);
-
 		//make colors
 		Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
 		pixmap.setColor(68f / 255, 71f / 255, 90f / 255, 1f);
@@ -99,11 +94,18 @@ public class TermoInfinito extends ApplicationAdapter {
 		stage.addActor(root);
 		Gdx.input.setInputProcessor(stage);
 
-		//make title
+		//make title and wrong word label
+		final Label.LabelStyle labelStyle = new Label.LabelStyle();
+		labelStyle.font = font;
 		final Table titleTable = new Table();
 		final Label titleLabel = new Label("Termo Inifinito", labelStyle);
 		titleTable.add(titleLabel);
 		root.add(titleTable).row();
+		wrongWordLabel = new Label("Palavra inválida!", labelStyle);
+		wrongWordLabel.setPosition(
+				Gdx.graphics.getWidth() / 2f - wrongWordLabel.getWidth() / 2f,
+				Gdx.graphics.getHeight() - wrongWordLabel.getHeight() - titleLabel.getHeight()
+		);
 
 		//make word attempts
 		Table wordsTable = new Table();
@@ -184,12 +186,11 @@ public class TermoInfinito extends ApplicationAdapter {
 						//PRESS ENTER
 					} else if (key.equals("ENTER")) {
 						//TO DO
-						wrongWordLabel.setPosition(
-								Gdx.graphics.getWidth() / 2f - wrongWordLabel.getWidth() / 2f,
-								Gdx.graphics.getHeight() - wrongWordLabel.getHeight() - titleLabel.getHeight()
-						);
-						stage.addActor(wrongWordLabel);
-						wrongWordTimer = 1.5f;
+						if (currentLetterAttempt >= LETTER_MAX) {
+						} else {
+							stage.addActor(wrongWordLabel);
+							wrongWordTimer = 1.5f;
+						}
 
 						//PRESS OTHER KEYS
 					} else {
