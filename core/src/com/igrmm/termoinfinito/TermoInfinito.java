@@ -170,6 +170,60 @@ public class TermoInfinito extends ApplicationAdapter {
 			float btnHeight = btnWidth * 1.5f;
 			float btnPad = 0.005f * Gdx.graphics.getWidth();
 
+			//to P
+			if (key <= Arrays.asList(KEYS).indexOf("P")) {
+				//add keys
+				firstRow.add(keyButton).width(btnWidth).height(btnHeight).pad(btnPad);
+
+				if (key == Arrays.asList(KEYS).indexOf("P")) {
+					// expand space at the end of row
+					firstRow.add(new Actor()).expandX();
+
+					//add row
+					keyboardTable.add(firstRow).grow().row();
+				}
+			}
+
+			//to <=
+			if (key > Arrays.asList(KEYS).indexOf("P") && key <= Arrays.asList(KEYS).indexOf("<=")) {
+				if (key == Arrays.asList(KEYS).indexOf("A"))
+					//add offset on second row
+					secondRow.add(new Actor()).width(btnWidth / 2f).pad(btnPad);
+
+				//add keys
+				secondRow.add(keyButton).width(btnWidth).height(btnHeight).pad(btnPad);
+
+				if (key == Arrays.asList(KEYS).indexOf("L"))
+					//add space between L and <=
+					secondRow.add(new Actor()).width(btnWidth).height(btnHeight).pad(btnPad);
+
+				if (key == Arrays.asList(KEYS).indexOf("<="))
+					//add row
+					keyboardTable.add(secondRow).grow().row();
+			}
+
+			//to enter
+			if (key > Arrays.asList(KEYS).indexOf("<=")) {
+				if (key == Arrays.asList(KEYS).indexOf("ENTER")) {
+					//add space between M and ENTER
+					thirdRow.add(new Actor()).expandX();
+
+					//add ENTER key
+					thirdRow.add(keyButton).width(btnWidth * 2f).height(btnHeight).pad(btnPad);
+
+					//add row
+					keyboardTable.add(thirdRow).grow();
+
+				} else {
+					if (key == Arrays.asList(KEYS).indexOf("Z"))
+						//add offset on third row
+						thirdRow.add(new Actor()).width(btnWidth).pad(btnPad);
+
+					//add keys
+					thirdRow.add(keyButton).width(btnWidth).height(btnHeight).pad(btnPad);
+				}
+			}
+
 			keyButton.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
@@ -261,60 +315,6 @@ public class TermoInfinito extends ApplicationAdapter {
 					}
 				}
 			});
-
-			//to P
-			if (key <= Arrays.asList(KEYS).indexOf("P")) {
-				//add keys
-				firstRow.add(keyButton).width(btnWidth).height(btnHeight).pad(btnPad);
-
-				if (key == Arrays.asList(KEYS).indexOf("P")) {
-					// expand space at the end of row
-					firstRow.add(new Actor()).expandX();
-
-					//add row
-					keyboardTable.add(firstRow).grow().row();
-				}
-			}
-
-			//to <=
-			if (key > Arrays.asList(KEYS).indexOf("P") && key <= Arrays.asList(KEYS).indexOf("<=")) {
-				if (key == Arrays.asList(KEYS).indexOf("A"))
-					//add offset on second row
-					secondRow.add(new Actor()).width(btnWidth / 2f).pad(btnPad);
-
-				//add keys
-				secondRow.add(keyButton).width(btnWidth).height(btnHeight).pad(btnPad);
-
-				if (key == Arrays.asList(KEYS).indexOf("L"))
-					//add space between L and <=
-					secondRow.add(new Actor()).width(btnWidth).height(btnHeight).pad(btnPad);
-
-				if (key == Arrays.asList(KEYS).indexOf("<="))
-					//add row
-					keyboardTable.add(secondRow).grow().row();
-			}
-
-			//to enter
-			if (key > Arrays.asList(KEYS).indexOf("<=")) {
-				if (key == Arrays.asList(KEYS).indexOf("ENTER")) {
-					//add space between M and ENTER
-					thirdRow.add(new Actor()).expandX();
-
-					//add ENTER key
-					thirdRow.add(keyButton).width(btnWidth * 2f).height(btnHeight).pad(btnPad);
-
-					//add row
-					keyboardTable.add(thirdRow).grow();
-
-				} else {
-					if (key == Arrays.asList(KEYS).indexOf("Z"))
-						//add offset on third row
-						thirdRow.add(new Actor()).width(btnWidth).pad(btnPad);
-
-					//add keys
-					thirdRow.add(keyButton).width(btnWidth).height(btnHeight).pad(btnPad);
-				}
-			}
 		}
 		root.add(keyboardTable);
 	}
