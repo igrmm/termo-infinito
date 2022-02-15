@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -50,6 +51,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		}
 		Collections.addAll(newWords, words.split("\\r?\\n"));
 		currentWord = newWords.get(new Random().nextInt(newWords.size()));
+		System.out.println(currentWord);
 
 		//make cool font
 		FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
@@ -71,13 +73,13 @@ public class TermoInfinito extends ApplicationAdapter {
 		TextureRegionDrawable keyPressedColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(40f / 255, 42f / 255, 54f / 255, 1f);
 		pixmap.fill();
-		TextureRegionDrawable wrongColor = new TextureRegionDrawable(new Texture(pixmap));
+		final TextureRegionDrawable wrongColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(80f / 255, 250f / 255, 123f / 255, 1f);
 		pixmap.fill();
-		TextureRegionDrawable greenColor = new TextureRegionDrawable(new Texture(pixmap));
+		final TextureRegionDrawable greenColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(255f / 255, 184f / 255, 108f / 255, 1f);
 		pixmap.fill();
-		TextureRegionDrawable yellowColor = new TextureRegionDrawable(new Texture(pixmap));
+		final TextureRegionDrawable yellowColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(139f / 255, 233f / 255, 253f / 255, 1f);
 		pixmap.fill();
 		final TextureRegionDrawable currentWordColor = new TextureRegionDrawable(new Texture(pixmap));
@@ -185,9 +187,56 @@ public class TermoInfinito extends ApplicationAdapter {
 
 						//PRESS ENTER
 					} else if (key.equals("ENTER")) {
-						//TO DO
 						if (currentLetterAttempt >= LETTER_MAX) {
+							String wordAttempt = "";
+							Map<Integer, TextButton> letterAttemptButtons = attempts.get(currentWordAttempt);
+							for (TextButton letterButton : letterAttemptButtons.values()) {
+								wordAttempt = wordAttempt.concat(String.valueOf(letterButton.getLabel().getText()));
+							}
+							wordAttempt = wordAttempt.toLowerCase();
+
+							//WIN CONDITION
+							if (currentWord.equals(wordAttempt)) {
+								wrongWordLabel.setText("Palavra certa!");
+								wrongWordTimer = 1.5f;
+								currentWord = newWords.get(new Random().nextInt(newWords.size()));
+								System.out.println(currentWord);
+
+								//TRY AGAIN CONDITION
+							} else if (newWords.contains(wordAttempt)) {
+								for (int i = 0; i < LETTER_MAX; i++) {
+									for (int j = 0; j < LETTER_MAX; j++) {
+										Drawable buttonColor = letterAttemptButtons.get(i).getStyle().up;
+
+										if (buttonColor == currentWordColor) {
+											letterAttemptButtons.get(i).getStyle().up = wrongColor;
+											letterAttemptButtons.get(i).getStyle().fontColor = Color.WHITE;
+										}
+
+										if (wordAttempt.charAt(i) == currentWord.charAt(j)) {
+											if (i == j) {
+												letterAttemptButtons.get(i).getStyle().up = greenColor;
+											} else if (buttonColor != greenColor) {
+												letterAttemptButtons.get(i).getStyle().up = yellowColor;
+											}
+										}
+									}
+								}
+
+//								currentWordAttempt++;
+								//GAME OVER CONDITION
+								if (currentWordAttempt >= WORD_MAX) {
+									//lose
+								}
+
+								//WORD IS NOT VALID
+							} else {
+								stage.addActor(wrongWordLabel);
+								wrongWordTimer = 1.5f;
+							}
+
 						} else {
+							//words must have 5 letters
 							stage.addActor(wrongWordLabel);
 							wrongWordTimer = 1.5f;
 						}
