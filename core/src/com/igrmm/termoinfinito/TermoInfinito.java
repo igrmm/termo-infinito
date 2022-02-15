@@ -64,34 +64,34 @@ public class TermoInfinito extends ApplicationAdapter {
 		Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
 		pixmap.setColor(68f / 255, 71f / 255, 90f / 255, 1f);
 		pixmap.fill();
-		TextureRegionDrawable backgroundColor = new TextureRegionDrawable(new Texture(pixmap));
+		TextureRegionDrawable backgroundDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(189f / 255, 147f / 255, 249f / 255, 1f);
 		pixmap.fill();
-		final TextureRegionDrawable keyColor = new TextureRegionDrawable(new Texture(pixmap));
+		final TextureRegionDrawable keyUpDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(255f / 255, 121f / 255, 198f / 255, 1f);
 		pixmap.fill();
-		TextureRegionDrawable keyPressedColor = new TextureRegionDrawable(new Texture(pixmap));
+		TextureRegionDrawable keyDownDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(40f / 255, 42f / 255, 54f / 255, 1f);
 		pixmap.fill();
-		final TextureRegionDrawable wrongColor = new TextureRegionDrawable(new Texture(pixmap));
+		final TextureRegionDrawable wrongKeyDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(80f / 255, 250f / 255, 123f / 255, 1f);
 		pixmap.fill();
-		final TextureRegionDrawable greenColor = new TextureRegionDrawable(new Texture(pixmap));
+		final TextureRegionDrawable greenKeyDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(255f / 255, 184f / 255, 108f / 255, 1f);
 		pixmap.fill();
-		final TextureRegionDrawable yellowColor = new TextureRegionDrawable(new Texture(pixmap));
+		final TextureRegionDrawable yellowKeyDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(139f / 255, 233f / 255, 253f / 255, 1f);
 		pixmap.fill();
-		final TextureRegionDrawable currentWordColor = new TextureRegionDrawable(new Texture(pixmap));
+		final TextureRegionDrawable currentWordDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(98f / 255, 114f / 255, 164f / 255, 1f);
 		pixmap.fill();
-		TextureRegionDrawable nextWordColor = new TextureRegionDrawable(new Texture(pixmap));
+		TextureRegionDrawable nextWordDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.dispose();
 
 		//make stage and root table
 		stage = new Stage(new ScreenViewport());
 		final Table root = new Table();
-		root.setBackground(backgroundColor);
+		root.setBackground(backgroundDrawableColor);
 		root.setFillParent(true);
 		stage.addActor(root);
 		Gdx.input.setInputProcessor(stage);
@@ -119,12 +119,12 @@ public class TermoInfinito extends ApplicationAdapter {
 				//verify if is word or letter attempt
 				if (i == 0) {
 					if (j == 0) {
-						textButtonStyle.up = keyColor;
+						textButtonStyle.up = keyUpDrawableColor;
 					} else {
-						textButtonStyle.up = currentWordColor;
+						textButtonStyle.up = currentWordDrawableColor;
 					}
 				} else {
-					textButtonStyle.up = nextWordColor;
+					textButtonStyle.up = nextWordDrawableColor;
 				}
 
 				textButtonStyle.fontColor = new Color(40f / 255, 42f / 255, 54f / 255, 1f);
@@ -157,8 +157,8 @@ public class TermoInfinito extends ApplicationAdapter {
 		for (int key = 0; key < KEYS.length; key++) {
 			TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
 			textButtonStyle.font = font;
-			textButtonStyle.up = keyColor;
-			textButtonStyle.down = keyPressedColor;
+			textButtonStyle.up = keyUpDrawableColor;
+			textButtonStyle.down = keyDownDrawableColor;
 			textButtonStyle.fontColor = new Color(40f / 255, 42f / 255, 54f / 255, 1f);
 
 			final TextButton keyButton = new TextButton(KEYS[key], textButtonStyle);
@@ -177,12 +177,12 @@ public class TermoInfinito extends ApplicationAdapter {
 						if (currentLetterAttempt > 0) {
 							if (currentLetterAttempt < LETTER_MAX) {
 								textButton = attempts.get(currentWordAttempt).get(currentLetterAttempt);
-								textButton.getStyle().up = currentWordColor;
+								textButton.getStyle().up = currentWordDrawableColor;
 							}
 							currentLetterAttempt--;
 							textButton = attempts.get(currentWordAttempt).get(currentLetterAttempt);
 							textButton.setText(" ");
-							textButton.getStyle().up = keyColor;
+							textButton.getStyle().up = keyUpDrawableColor;
 						}
 
 						//PRESS ENTER
@@ -208,16 +208,16 @@ public class TermoInfinito extends ApplicationAdapter {
 									for (int j = 0; j < LETTER_MAX; j++) {
 										Drawable buttonColor = letterAttemptButtons.get(i).getStyle().up;
 
-										if (buttonColor == currentWordColor) {
-											letterAttemptButtons.get(i).getStyle().up = wrongColor;
+										if (buttonColor == currentWordDrawableColor) {
+											letterAttemptButtons.get(i).getStyle().up = wrongKeyDrawableColor;
 											letterAttemptButtons.get(i).getStyle().fontColor = Color.WHITE;
 										}
 
 										if (wordAttempt.charAt(i) == currentWord.charAt(j)) {
 											if (i == j) {
-												letterAttemptButtons.get(i).getStyle().up = greenColor;
-											} else if (buttonColor != greenColor) {
-												letterAttemptButtons.get(i).getStyle().up = yellowColor;
+												letterAttemptButtons.get(i).getStyle().up = greenKeyDrawableColor;
+											} else if (buttonColor != greenKeyDrawableColor) {
+												letterAttemptButtons.get(i).getStyle().up = yellowKeyDrawableColor;
 											}
 										}
 									}
@@ -246,11 +246,11 @@ public class TermoInfinito extends ApplicationAdapter {
 						if (currentLetterAttempt < LETTER_MAX) {
 							textButton = attempts.get(currentWordAttempt).get(currentLetterAttempt);
 							textButton.setText(String.valueOf(keyButton.getLabel().getText()));
-							textButton.getStyle().up = currentWordColor;
+							textButton.getStyle().up = currentWordDrawableColor;
 							currentLetterAttempt++;
 							if (currentLetterAttempt < LETTER_MAX) {
 								textButton = attempts.get(currentWordAttempt).get(currentLetterAttempt);
-								textButton.getStyle().up = keyColor;
+								textButton.getStyle().up = keyUpDrawableColor;
 							}
 						}
 					}
