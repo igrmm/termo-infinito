@@ -32,7 +32,7 @@ public class TermoInfinito extends ApplicationAdapter {
 	private final Map<Integer, Map<Integer, TextButton>> attempts = new HashMap<>();
 	private final List<String> wonWords = new ArrayList<>();
 	private final List<String> newWords = new ArrayList<>();
-	private int currentWordAttempt, currentLetterAttempt;
+	private int wordAttemptIndex, letterAttemptIndex;
 	private String currentWord;
 	private Label wrongWordLabel;
 	private float wrongWordTimer;
@@ -228,26 +228,26 @@ public class TermoInfinito extends ApplicationAdapter {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 					String key = String.valueOf(keyButton.getLabel().getText());
-					TextButton textButton;
+					TextButton letterAttemptButton;
 
 					//PRESS BACKSPACE
 					if (key.equals("<=")) {
-						if (currentLetterAttempt > 0) {
-							if (currentLetterAttempt < LETTER_MAX) {
-								textButton = attempts.get(currentWordAttempt).get(currentLetterAttempt);
-								textButton.getStyle().up = currentWordDrawableColor;
+						if (letterAttemptIndex > 0) {
+							if (letterAttemptIndex < LETTER_MAX) {
+								letterAttemptButton = attempts.get(wordAttemptIndex).get(letterAttemptIndex);
+								letterAttemptButton.getStyle().up = currentWordDrawableColor;
 							}
-							currentLetterAttempt--;
-							textButton = attempts.get(currentWordAttempt).get(currentLetterAttempt);
-							textButton.setText(" ");
-							textButton.getStyle().up = keyUpDrawableColor;
+							letterAttemptIndex--;
+							letterAttemptButton = attempts.get(wordAttemptIndex).get(letterAttemptIndex);
+							letterAttemptButton.setText(" ");
+							letterAttemptButton.getStyle().up = keyUpDrawableColor;
 						}
 
 						//PRESS ENTER
 					} else if (key.equals("ENTER")) {
-						if (currentLetterAttempt >= LETTER_MAX) {
+						if (letterAttemptIndex >= LETTER_MAX) {
 							String wordAttempt = "";
-							Map<Integer, TextButton> letterAttemptButtons = attempts.get(currentWordAttempt);
+							Map<Integer, TextButton> letterAttemptButtons = attempts.get(wordAttemptIndex);
 							for (TextButton letterButton : letterAttemptButtons.values()) {
 								wordAttempt = wordAttempt.concat(String.valueOf(letterButton.getLabel().getText()));
 							}
@@ -284,7 +284,7 @@ public class TermoInfinito extends ApplicationAdapter {
 
 //								currentWordAttempt++;
 								//GAME OVER CONDITION
-								if (currentWordAttempt >= WORD_MAX) {
+								if (wordAttemptIndex >= WORD_MAX) {
 									//lose
 								}
 
@@ -302,14 +302,14 @@ public class TermoInfinito extends ApplicationAdapter {
 
 						//PRESS OTHER KEYS
 					} else {
-						if (currentLetterAttempt < LETTER_MAX) {
-							textButton = attempts.get(currentWordAttempt).get(currentLetterAttempt);
-							textButton.setText(String.valueOf(keyButton.getLabel().getText()));
-							textButton.getStyle().up = currentWordDrawableColor;
-							currentLetterAttempt++;
-							if (currentLetterAttempt < LETTER_MAX) {
-								textButton = attempts.get(currentWordAttempt).get(currentLetterAttempt);
-								textButton.getStyle().up = keyUpDrawableColor;
+						if (letterAttemptIndex < LETTER_MAX) {
+							letterAttemptButton = attempts.get(wordAttemptIndex).get(letterAttemptIndex);
+							letterAttemptButton.setText(String.valueOf(keyButton.getLabel().getText()));
+							letterAttemptButton.getStyle().up = currentWordDrawableColor;
+							letterAttemptIndex++;
+							if (letterAttemptIndex < LETTER_MAX) {
+								letterAttemptButton = attempts.get(wordAttemptIndex).get(letterAttemptIndex);
+								letterAttemptButton.getStyle().up = keyUpDrawableColor;
 							}
 						}
 					}
