@@ -61,16 +61,19 @@ public class TermoInfinito extends ApplicationAdapter {
 		fontGenerator.dispose();
 
 		//make colors
+		final Color titleFontColor = new Color(248f / 255, 248f / 255, 242f / 255, 1f);
+		final Color keyFontColor = new Color(40f / 255, 42f / 255, 54f / 255, 1f);
+		final Color wrongKeyFontColor = new Color(68f / 255, 71f / 255, 90f / 255, 1f);
 		Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
 		pixmap.setColor(68f / 255, 71f / 255, 90f / 255, 1f);
 		pixmap.fill();
-		TextureRegionDrawable backgroundDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
+		final TextureRegionDrawable backgroundDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(189f / 255, 147f / 255, 249f / 255, 1f);
 		pixmap.fill();
 		final TextureRegionDrawable keyUpDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(255f / 255, 121f / 255, 198f / 255, 1f);
 		pixmap.fill();
-		TextureRegionDrawable keyDownDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
+		final TextureRegionDrawable keyDownDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(40f / 255, 42f / 255, 54f / 255, 1f);
 		pixmap.fill();
 		final TextureRegionDrawable wrongKeyDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
@@ -85,7 +88,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		final TextureRegionDrawable currentWordDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(98f / 255, 114f / 255, 164f / 255, 1f);
 		pixmap.fill();
-		TextureRegionDrawable nextWordDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
+		final TextureRegionDrawable nextWordDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.dispose();
 
 		//make stage and root table
@@ -99,6 +102,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		//make title and wrong word label
 		final Label.LabelStyle labelStyle = new Label.LabelStyle();
 		labelStyle.font = font;
+		labelStyle.fontColor = titleFontColor;
 		final Table titleTable = new Table();
 		final Label titleLabel = new Label("Termo Inifinito", labelStyle);
 		titleTable.add(titleLabel);
@@ -115,6 +119,7 @@ public class TermoInfinito extends ApplicationAdapter {
 			for (int j = 0; j < LETTER_MAX; j++) {
 				TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
 				textButtonStyle.font = font;
+				textButtonStyle.fontColor = keyFontColor;
 
 				//verify if is word or letter attempt
 				if (i == 0) {
@@ -127,7 +132,6 @@ public class TermoInfinito extends ApplicationAdapter {
 					textButtonStyle.up = nextWordDrawableColor;
 				}
 
-				textButtonStyle.fontColor = new Color(40f / 255, 42f / 255, 54f / 255, 1f);
 				float btnSize = 0.12f * Gdx.graphics.getWidth();
 				float btnPad = 0.015f * Gdx.graphics.getWidth();
 				TextButton textButton = new TextButton(" ", textButtonStyle);
@@ -159,7 +163,7 @@ public class TermoInfinito extends ApplicationAdapter {
 			textButtonStyle.font = font;
 			textButtonStyle.up = keyUpDrawableColor;
 			textButtonStyle.down = keyDownDrawableColor;
-			textButtonStyle.fontColor = new Color(40f / 255, 42f / 255, 54f / 255, 1f);
+			textButtonStyle.fontColor = keyFontColor;
 
 			final TextButton keyButton = new TextButton(KEYS[key], textButtonStyle);
 			float btnWidth = 0.075f * Gdx.graphics.getWidth();
@@ -210,10 +214,11 @@ public class TermoInfinito extends ApplicationAdapter {
 
 										if (buttonColor == currentWordDrawableColor) {
 											letterAttemptButtons.get(i).getStyle().up = wrongKeyDrawableColor;
-											letterAttemptButtons.get(i).getStyle().fontColor = Color.WHITE;
+											letterAttemptButtons.get(i).getStyle().fontColor = wrongKeyFontColor;
 										}
 
 										if (wordAttempt.charAt(i) == currentWord.charAt(j)) {
+											letterAttemptButtons.get(i).getStyle().fontColor = keyFontColor;
 											if (i == j) {
 												letterAttemptButtons.get(i).getStyle().up = greenKeyDrawableColor;
 											} else if (buttonColor != greenKeyDrawableColor) {
