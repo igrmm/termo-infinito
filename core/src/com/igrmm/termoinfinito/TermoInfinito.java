@@ -61,7 +61,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		fontGenerator.dispose();
 
 		//make colors
-		final Color titleFontColor = new Color(248f / 255, 248f / 255, 242f / 255, 1f);
+		final Color labelFontColor = new Color(248f / 255, 248f / 255, 242f / 255, 1f);
 		final Color keyFontColor = new Color(40f / 255, 42f / 255, 54f / 255, 1f);
 		final Color wrongKeyFontColor = new Color(68f / 255, 71f / 255, 90f / 255, 1f);
 		Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -91,22 +91,42 @@ public class TermoInfinito extends ApplicationAdapter {
 		final TextureRegionDrawable nextWordDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.dispose();
 
-		//make stage and root table
+		//make generic label style
+		final Label.LabelStyle labelStyle = new Label.LabelStyle();
+		labelStyle.font = font;
+		labelStyle.fontColor = labelFontColor;
+
+		//make generic button style
+		TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+		buttonStyle.font = font;
+		buttonStyle.up = keyUpDrawableColor;
+		buttonStyle.down = keyDownDrawableColor;
+		buttonStyle.fontColor = keyFontColor;
+
+		//make statistics table
+		final Table statisticsTable = new Table();
+		statisticsTable.setBackground(wrongKeyDrawableColor);
+		Label victoryLabel = new Label("VOCÊ ACERTOU!", labelStyle);
+		statisticsTable.add(victoryLabel).pad(Gdx.graphics.getWidth() * 0.05f).row();
+		TextButton playAgainButton = new TextButton("JOGAR NOVAMENTE", buttonStyle);
+		statisticsTable.add(playAgainButton).pad(Gdx.graphics.getWidth() * 0.05f).row();
+		statisticsTable.pack();
+		statisticsTable.setWidth(Gdx.graphics.getWidth());
+
+		//make stage and gameTable table
 		stage = new Stage(new ScreenViewport());
-		final Table root = new Table();
-		root.setBackground(backgroundDrawableColor);
-		root.setFillParent(true);
-		stage.addActor(root);
+		final Table gameTable = new Table();
+		gameTable.setBackground(backgroundDrawableColor);
+		gameTable.setFillParent(true);
+		stage.addActor(gameTable);
+		stage.addActor(statisticsTable);
 		Gdx.input.setInputProcessor(stage);
 
 		//make title and wrong word label
-		final Label.LabelStyle labelStyle = new Label.LabelStyle();
-		labelStyle.font = font;
-		labelStyle.fontColor = titleFontColor;
 		final Table titleTable = new Table();
 		final Label titleLabel = new Label("Termo Inifinito", labelStyle);
 		titleTable.add(titleLabel);
-		root.add(titleTable).row();
+		gameTable.add(titleTable).row();
 		wrongWordLabel = new Label("Palavra inválida!", labelStyle);
 		wrongWordLabel.setPosition(
 				Gdx.graphics.getWidth() / 2f - wrongWordLabel.getWidth() / 2f,
@@ -117,24 +137,24 @@ public class TermoInfinito extends ApplicationAdapter {
 		Table wordsTable = new Table();
 		for (int i = 0; i < WORD_MAX; i++) {
 			for (int j = 0; j < LETTER_MAX; j++) {
-				TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-				textButtonStyle.font = font;
-				textButtonStyle.fontColor = keyFontColor;
+				TextButton.TextButtonStyle attemptButtonStyle = new TextButton.TextButtonStyle();
+				attemptButtonStyle.font = font;
+				attemptButtonStyle.fontColor = keyFontColor;
 
 				//verify if is word or letter attempt
 				if (i == 0) {
 					if (j == 0) {
-						textButtonStyle.up = keyUpDrawableColor;
+						attemptButtonStyle.up = keyUpDrawableColor;
 					} else {
-						textButtonStyle.up = currentWordDrawableColor;
+						attemptButtonStyle.up = currentWordDrawableColor;
 					}
 				} else {
-					textButtonStyle.up = nextWordDrawableColor;
+					attemptButtonStyle.up = nextWordDrawableColor;
 				}
 
 				float btnSize = 0.12f * Gdx.graphics.getWidth();
 				float btnPad = 0.015f * Gdx.graphics.getWidth();
-				TextButton textButton = new TextButton(" ", textButtonStyle);
+				TextButton textButton = new TextButton(" ", attemptButtonStyle);
 				wordsTable.add(textButton).size(btnSize).pad(btnPad);
 				if (j == 4) wordsTable.row();
 
@@ -150,7 +170,7 @@ public class TermoInfinito extends ApplicationAdapter {
 				}
 			}
 		}
-		root.add(wordsTable).grow().row();
+		gameTable.add(wordsTable).grow().row();
 
 		//make keyboard
 		Table keyboardTable = new Table();
@@ -159,13 +179,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		Table thirdRow = new Table();
 
 		for (int key = 0; key < KEYS.length; key++) {
-			TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-			textButtonStyle.font = font;
-			textButtonStyle.up = keyUpDrawableColor;
-			textButtonStyle.down = keyDownDrawableColor;
-			textButtonStyle.fontColor = keyFontColor;
-
-			final TextButton keyButton = new TextButton(KEYS[key], textButtonStyle);
+			final TextButton keyButton = new TextButton(KEYS[key], buttonStyle);
 			float btnWidth = 0.075f * Gdx.graphics.getWidth();
 			float btnHeight = btnWidth * 1.5f;
 			float btnPad = 0.005f * Gdx.graphics.getWidth();
@@ -318,7 +332,7 @@ public class TermoInfinito extends ApplicationAdapter {
 				}
 			});
 		}
-		root.add(keyboardTable);
+		gameTable.add(keyboardTable);
 	}
 
 	public String getCurrentWordWithoutLatinChar(String currentWord) {
