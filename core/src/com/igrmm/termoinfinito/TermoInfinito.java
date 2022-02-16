@@ -79,6 +79,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		final TextureRegionDrawable wrongKeyDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(80f / 255, 250f / 255, 123f / 255, 1f);
 		pixmap.fill();
+		final TextureRegionDrawable statisticsBackgroundDrawableColor = wrongKeyDrawableColor;
 		final TextureRegionDrawable greenKeyDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
 		pixmap.setColor(255f / 255, 184f / 255, 108f / 255, 1f);
 		pixmap.fill();
@@ -105,14 +106,19 @@ public class TermoInfinito extends ApplicationAdapter {
 
 		//make statistics table
 		final Table statisticsTable = new Table();
-		statisticsTable.setBackground(wrongKeyDrawableColor);
+		statisticsTable.setFillParent(true);
+		Table statisticsEmptyRow1 = new Table();
+		statisticsTable.add(statisticsEmptyRow1).row();
+		Table statisticsRow = new Table();
+		statisticsTable.add(statisticsRow).row();
+		statisticsRow.setBackground(statisticsBackgroundDrawableColor);
 		Label victoryLabel = new Label("VOCÊ ACERTOU!", labelStyle);
-		statisticsTable.add(victoryLabel).pad(Gdx.graphics.getWidth() * 0.05f).row();
+		statisticsRow.add(victoryLabel).pad(Gdx.graphics.getWidth() * 0.05f).row();
 		TextButton playAgainButton = new TextButton("JOGAR NOVAMENTE", buttonStyle);
-		playAgainButton.pad(Gdx.graphics.getWidth() * 0.05f);
-		statisticsTable.add(playAgainButton).pad(Gdx.graphics.getWidth() * 0.05f).row();
-		statisticsTable.pack();
-		statisticsTable.setWidth(Gdx.graphics.getWidth());
+		playAgainButton.pad(Gdx.graphics.getWidth() * 0.02f);
+		statisticsRow.add(playAgainButton).pad(Gdx.graphics.getWidth() * 0.05f).row();
+		Table statisticsEmptyRow2 = new Table();
+		statisticsTable.add(statisticsEmptyRow2);
 
 		//make stage and gameTable table
 		stage = new Stage(new ScreenViewport());
