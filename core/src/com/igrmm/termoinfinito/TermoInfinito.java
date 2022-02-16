@@ -27,6 +27,20 @@ public class TermoInfinito extends ApplicationAdapter {
 	public static final int WORD_MAX = 6;
 	public static final int LETTER_MAX = 5;
 
+	private final Color labelFontColor = new Color(248f / 255, 248f / 255, 242f / 255, 1f);
+	private final Color keyFontColor = new Color(40f / 255, 42f / 255, 54f / 255, 1f);
+	private final Color wrongKeyFontColor = new Color(68f / 255, 71f / 255, 90f / 255, 1f);
+
+	private TextureRegionDrawable backgroundDrawableColor;
+	private TextureRegionDrawable keyUpDrawableColor;
+	private TextureRegionDrawable keyDownDrawableColor;
+	private TextureRegionDrawable wrongKeyDrawableColor;
+	private TextureRegionDrawable statisticsBackgroundDrawableColor;
+	private TextureRegionDrawable greenKeyDrawableColor;
+	private TextureRegionDrawable yellowKeyDrawableColor;
+	private TextureRegionDrawable currentWordDrawableColor;
+	private TextureRegionDrawable nextWordDrawableColor;
+
 	private Stage stage;
 	private BitmapFont font;
 	private final Map<Integer, Map<Integer, TextButton>> attempts = new HashMap<>();
@@ -61,37 +75,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		font = fontGenerator.generateFont(parameter);
 		fontGenerator.dispose();
 
-		//make colors
-		final Color labelFontColor = new Color(248f / 255, 248f / 255, 242f / 255, 1f);
-		final Color keyFontColor = new Color(40f / 255, 42f / 255, 54f / 255, 1f);
-		final Color wrongKeyFontColor = new Color(68f / 255, 71f / 255, 90f / 255, 1f);
-		Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-		pixmap.setColor(68f / 255, 71f / 255, 90f / 255, 1f);
-		pixmap.fill();
-		final TextureRegionDrawable backgroundDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
-		pixmap.setColor(189f / 255, 147f / 255, 249f / 255, 1f);
-		pixmap.fill();
-		final TextureRegionDrawable keyUpDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
-		pixmap.setColor(255f / 255, 121f / 255, 198f / 255, 1f);
-		pixmap.fill();
-		final TextureRegionDrawable keyDownDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
-		pixmap.setColor(40f / 255, 42f / 255, 54f / 255, 1f);
-		pixmap.fill();
-		final TextureRegionDrawable wrongKeyDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
-		pixmap.setColor(80f / 255, 250f / 255, 123f / 255, 1f);
-		pixmap.fill();
-		final TextureRegionDrawable statisticsBackgroundDrawableColor = wrongKeyDrawableColor;
-		final TextureRegionDrawable greenKeyDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
-		pixmap.setColor(255f / 255, 184f / 255, 108f / 255, 1f);
-		pixmap.fill();
-		final TextureRegionDrawable yellowKeyDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
-		pixmap.setColor(139f / 255, 233f / 255, 253f / 255, 1f);
-		pixmap.fill();
-		final TextureRegionDrawable currentWordDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
-		pixmap.setColor(98f / 255, 114f / 255, 164f / 255, 1f);
-		pixmap.fill();
-		final TextureRegionDrawable nextWordDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
-		pixmap.dispose();
+		makeDrawables();
 
 		//make generic label style
 		final Label.LabelStyle labelStyle = new Label.LabelStyle();
@@ -382,6 +366,36 @@ public class TermoInfinito extends ApplicationAdapter {
 		currentWordWithoutLatinChar = currentWordWithoutLatinChar.replace("ç", "c");
 
 		return currentWordWithoutLatinChar;
+	}
+
+	public void makeDrawables() {
+		Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+		pixmap.setColor(68f / 255, 71f / 255, 90f / 255, 1f);
+		pixmap.fill();
+		backgroundDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
+		pixmap.setColor(189f / 255, 147f / 255, 249f / 255, 1f);
+		pixmap.fill();
+		keyUpDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
+		pixmap.setColor(255f / 255, 121f / 255, 198f / 255, 1f);
+		pixmap.fill();
+		keyDownDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
+		pixmap.setColor(40f / 255, 42f / 255, 54f / 255, 1f);
+		pixmap.fill();
+		wrongKeyDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
+		pixmap.setColor(80f / 255, 250f / 255, 123f / 255, 1f);
+		pixmap.fill();
+		greenKeyDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
+		pixmap.setColor(255f / 255, 184f / 255, 108f / 255, 1f);
+		pixmap.fill();
+		yellowKeyDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
+		pixmap.setColor(139f / 255, 233f / 255, 253f / 255, 1f);
+		pixmap.fill();
+		currentWordDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
+		pixmap.setColor(98f / 255, 114f / 255, 164f / 255, 1f);
+		pixmap.fill();
+		nextWordDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
+		statisticsBackgroundDrawableColor = wrongKeyDrawableColor;
+		pixmap.dispose();
 	}
 
 	@Override
