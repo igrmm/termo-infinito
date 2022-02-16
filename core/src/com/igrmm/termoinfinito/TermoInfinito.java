@@ -109,6 +109,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		Label victoryLabel = new Label("VOCÊ ACERTOU!", labelStyle);
 		statisticsTable.add(victoryLabel).pad(Gdx.graphics.getWidth() * 0.05f).row();
 		TextButton playAgainButton = new TextButton("JOGAR NOVAMENTE", buttonStyle);
+		playAgainButton.pad(Gdx.graphics.getWidth() * 0.05f);
 		statisticsTable.add(playAgainButton).pad(Gdx.graphics.getWidth() * 0.05f).row();
 		statisticsTable.pack();
 		statisticsTable.setWidth(Gdx.graphics.getWidth());
