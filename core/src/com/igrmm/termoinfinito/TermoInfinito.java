@@ -251,6 +251,12 @@ public class TermoInfinito extends ApplicationAdapter {
 					String key = String.valueOf(keyButton.getLabel().getText());
 					TextButton letterAttemptButton;
 
+					//remove statistics table when key is pressed
+					if (statisticsTable.getStage() == stage) {
+						statisticsTable.remove();
+						return;
+					}
+
 					//PRESS BACKSPACE
 					if (key.equals("<=")) {
 						if (letterAttemptIndex > 0) {
