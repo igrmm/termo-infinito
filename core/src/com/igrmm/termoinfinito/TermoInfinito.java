@@ -30,7 +30,7 @@ public class TermoInfinito extends ApplicationAdapter {
 	private Stage stage;
 	private BitmapFont font;
 	private final Map<Integer, Map<Integer, TextButton>> attempts = new HashMap<>();
-	private final List<TextButton> keys = new ArrayList<>();
+	private final Map<String, TextButton> keys = new HashMap<>();
 	private final List<String> wonWords = new ArrayList<>();
 	private final List<String> newWords = new ArrayList<>();
 	private int wordAttemptIndex, letterAttemptIndex;
@@ -192,7 +192,7 @@ public class TermoInfinito extends ApplicationAdapter {
 			float btnHeight = btnWidth * 1.5f;
 			float btnPad = 0.005f * Gdx.graphics.getWidth();
 
-			keys.add(keyButton);
+			keys.put(KEYS[key], keyButton);
 
 			//to P
 			if (key <= Arrays.asList(KEYS).indexOf("P")) {
