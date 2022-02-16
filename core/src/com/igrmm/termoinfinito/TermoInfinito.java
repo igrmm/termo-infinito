@@ -127,7 +127,6 @@ public class TermoInfinito extends ApplicationAdapter {
 		gameTable.setBackground(backgroundDrawableColor);
 		gameTable.setFillParent(true);
 		stage.addActor(gameTable);
-		stage.addActor(statisticsTable);
 		Gdx.input.setInputProcessor(stage);
 
 		//make title and wrong word label
@@ -187,7 +186,12 @@ public class TermoInfinito extends ApplicationAdapter {
 		Table thirdRow = new Table();
 
 		for (int key = 0; key < KEYS.length; key++) {
-			final TextButton keyButton = new TextButton(KEYS[key], buttonStyle);
+			final TextButton.TextButtonStyle keyButtonStyle = new TextButton.TextButtonStyle();
+			keyButtonStyle.font = buttonStyle.font;
+			keyButtonStyle.up = buttonStyle.up;
+			keyButtonStyle.down = buttonStyle.down;
+			keyButtonStyle.fontColor = buttonStyle.fontColor;
+			final TextButton keyButton = new TextButton(KEYS[key], keyButtonStyle);
 			float btnWidth = 0.075f * Gdx.graphics.getWidth();
 			float btnHeight = btnWidth * 1.5f;
 			float btnPad = 0.005f * Gdx.graphics.getWidth();
@@ -287,8 +291,6 @@ public class TermoInfinito extends ApplicationAdapter {
 
 							//WIN CONDITION
 							if (currentWordWithoutLatinChar.equals(wordAttempt)) {
-								wrongWordLabel.setText("Palavra certa!");
-								wrongWordTimer = 1.5f;
 								currentWord = newWords.get(new Random().nextInt(newWords.size()));
 								System.out.println(currentWord);
 
@@ -297,27 +299,47 @@ public class TermoInfinito extends ApplicationAdapter {
 								for (int i = 0; i < LETTER_MAX; i++) {
 									for (int j = 0; j < LETTER_MAX; j++) {
 										Drawable buttonColor = letterAttemptButtons.get(i).getStyle().up;
+										String letterAttempt = String.valueOf(letterAttemptButtons.get(i).getText());
 
 										if (buttonColor == currentWordDrawableColor) {
 											letterAttemptButtons.get(i).getStyle().up = wrongKeyDrawableColor;
 											letterAttemptButtons.get(i).getStyle().fontColor = wrongKeyFontColor;
+											keys.get(letterAttempt).getStyle().up = wrongKeyDrawableColor;
+											keys.get(letterAttempt).getStyle().fontColor = wrongKeyFontColor;
 										}
 
 										if (wordAttempt.charAt(i) == currentWordWithoutLatinChar.charAt(j)) {
 											letterAttemptButtons.get(i).getStyle().fontColor = keyFontColor;
+											keys.get(letterAttempt).getStyle().fontColor = keyFontColor;
 											if (i == j) {
 												letterAttemptButtons.get(i).getStyle().up = greenKeyDrawableColor;
+												keys.get(letterAttempt).getStyle().up = greenKeyDrawableColor;
 											} else if (buttonColor != greenKeyDrawableColor) {
 												letterAttemptButtons.get(i).getStyle().up = yellowKeyDrawableColor;
+												keys.get(letterAttempt).getStyle().up = yellowKeyDrawableColor;
 											}
 										}
 									}
 								}
 
-//								currentWordAttempt++;
+								wordAttemptIndex++;
 								//GAME OVER CONDITION
 								if (wordAttemptIndex >= WORD_MAX) {
 									//lose
+									stage.addActor(wrongWordLabel);
+									wrongWordTimer = 1.5f;
+									return;
+								}
+
+								letterAttemptIndex = 0;
+								letterAttemptButtons = attempts.get(wordAttemptIndex);
+								for (int i = 0; i < letterAttemptButtons.keySet().size(); i++) {
+									letterAttemptButton = attempts.get(wordAttemptIndex).get(i);
+									if (i == 0) {
+										letterAttemptButton.getStyle().up = keyUpDrawableColor;
+									} else {
+										letterAttemptButton.getStyle().up = currentWordDrawableColor;
+									}
 								}
 
 								//WORD IS NOT VALID
