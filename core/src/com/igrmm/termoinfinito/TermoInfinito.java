@@ -44,6 +44,7 @@ public class TermoInfinito extends ApplicationAdapter {
 	private Stage stage;
 	private Table statisticsTable;
 	private Label victoryMaybeLabel;
+	private TextButton playAgainButton;
 	private BitmapFont font;
 	private final Map<Integer, Map<Integer, TextButton>> attempts = new HashMap<>();
 	private final Map<String, TextButton> keys = new HashMap<>();
@@ -101,7 +102,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		statisticsRow.setBackground(statisticsBackgroundDrawableColor);
 		victoryMaybeLabel = new Label("", labelStyle);
 		statisticsRow.add(victoryMaybeLabel).pad(Gdx.graphics.getWidth() * 0.05f).row();
-		TextButton playAgainButton = new TextButton("JOGAR NOVAMENTE", buttonStyle);
+		playAgainButton = new TextButton("JOGAR NOVAMENTE", buttonStyle);
 		playAgainButton.pad(Gdx.graphics.getWidth() * 0.02f);
 		statisticsRow.add(playAgainButton).pad(Gdx.graphics.getWidth() * 0.05f).row();
 		Table statisticsEmptyRow2 = new Table();
@@ -243,6 +244,12 @@ public class TermoInfinito extends ApplicationAdapter {
 	}
 
 	public void handleInput() {
+		playAgainButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+			}
+		});
+
 		for (final String key : KEYS) {
 			final TextButton keyButton = keys.get(key);
 			keyButton.addListener(new ClickListener() {
