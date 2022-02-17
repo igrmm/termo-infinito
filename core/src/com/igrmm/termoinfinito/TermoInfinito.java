@@ -42,6 +42,8 @@ public class TermoInfinito extends ApplicationAdapter {
 	private TextureRegionDrawable nextWordDrawableColor;
 
 	private Stage stage;
+	private Table statisticsTable;
+	private Label victoryMaybeLabel;
 	private BitmapFont font;
 	private final Map<Integer, Map<Integer, TextButton>> attempts = new HashMap<>();
 	private final Map<String, TextButton> keys = new HashMap<>();
@@ -66,7 +68,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		}
 		Collections.addAll(newWords, words.split("\\r?\\n"));
 		currentWord = newWords.get(new Random().nextInt(newWords.size()));
-		System.out.println(getCurrentWordWithoutLatinChar(currentWord));
+		System.out.println(currentWord);
 
 		//make cool font
 		FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
@@ -90,15 +92,15 @@ public class TermoInfinito extends ApplicationAdapter {
 		buttonStyle.fontColor = keyFontColor;
 
 		//make statistics table
-		final Table statisticsTable = new Table();
+		statisticsTable = new Table();
 		statisticsTable.setFillParent(true);
 		Table statisticsEmptyRow1 = new Table();
 		statisticsTable.add(statisticsEmptyRow1).row();
 		Table statisticsRow = new Table();
 		statisticsTable.add(statisticsRow).row();
 		statisticsRow.setBackground(statisticsBackgroundDrawableColor);
-		Label victoryLabel = new Label("VOCÊ ACERTOU!", labelStyle);
-		statisticsRow.add(victoryLabel).pad(Gdx.graphics.getWidth() * 0.05f).row();
+		victoryMaybeLabel = new Label("", labelStyle);
+		statisticsRow.add(victoryMaybeLabel).pad(Gdx.graphics.getWidth() * 0.05f).row();
 		TextButton playAgainButton = new TextButton("JOGAR NOVAMENTE", buttonStyle);
 		playAgainButton.pad(Gdx.graphics.getWidth() * 0.02f);
 		statisticsRow.add(playAgainButton).pad(Gdx.graphics.getWidth() * 0.05f).row();
@@ -273,45 +275,43 @@ public class TermoInfinito extends ApplicationAdapter {
 							wordAttempt = wordAttempt.toLowerCase();
 							String currentWordWithoutLatinChar = getCurrentWordWithoutLatinChar(currentWord);
 
-							//WIN CONDITION
-							if (currentWordWithoutLatinChar.equals(wordAttempt)) {
-								currentWord = newWords.get(new Random().nextInt(newWords.size()));
-								System.out.println(currentWord);
+							//paint buttons with colors
+							for (int i = 0; i < LETTER_MAX; i++) {
+								for (int j = 0; j < LETTER_MAX; j++) {
+									Drawable buttonColor = letterAttemptButtons.get(i).getStyle().up;
+									String letterAttempt = String.valueOf(letterAttemptButtons.get(i).getText());
 
-								//TRY AGAIN CONDITION
-							} else if (newWords.contains(wordAttempt)) {
-								for (int i = 0; i < LETTER_MAX; i++) {
-									for (int j = 0; j < LETTER_MAX; j++) {
-										Drawable buttonColor = letterAttemptButtons.get(i).getStyle().up;
-										String letterAttempt = String.valueOf(letterAttemptButtons.get(i).getText());
+									if (buttonColor == currentWordDrawableColor) {
+										letterAttemptButtons.get(i).getStyle().up = wrongKeyDrawableColor;
+										letterAttemptButtons.get(i).getStyle().fontColor = wrongKeyFontColor;
+										keys.get(letterAttempt).getStyle().up = wrongKeyDrawableColor;
+										keys.get(letterAttempt).getStyle().fontColor = wrongKeyFontColor;
+									}
 
-										if (buttonColor == currentWordDrawableColor) {
-											letterAttemptButtons.get(i).getStyle().up = wrongKeyDrawableColor;
-											letterAttemptButtons.get(i).getStyle().fontColor = wrongKeyFontColor;
-											keys.get(letterAttempt).getStyle().up = wrongKeyDrawableColor;
-											keys.get(letterAttempt).getStyle().fontColor = wrongKeyFontColor;
-										}
-
-										if (wordAttempt.charAt(i) == currentWordWithoutLatinChar.charAt(j)) {
-											letterAttemptButtons.get(i).getStyle().fontColor = keyFontColor;
-											keys.get(letterAttempt).getStyle().fontColor = keyFontColor;
-											if (i == j) {
-												letterAttemptButtons.get(i).getStyle().up = greenKeyDrawableColor;
-												keys.get(letterAttempt).getStyle().up = greenKeyDrawableColor;
-											} else if (buttonColor != greenKeyDrawableColor) {
-												letterAttemptButtons.get(i).getStyle().up = yellowKeyDrawableColor;
-												keys.get(letterAttempt).getStyle().up = yellowKeyDrawableColor;
-											}
+									if (wordAttempt.charAt(i) == currentWordWithoutLatinChar.charAt(j)) {
+										letterAttemptButtons.get(i).getStyle().fontColor = keyFontColor;
+										keys.get(letterAttempt).getStyle().fontColor = keyFontColor;
+										if (i == j) {
+											letterAttemptButtons.get(i).getStyle().up = greenKeyDrawableColor;
+											keys.get(letterAttempt).getStyle().up = greenKeyDrawableColor;
+										} else if (buttonColor != greenKeyDrawableColor) {
+											letterAttemptButtons.get(i).getStyle().up = yellowKeyDrawableColor;
+											keys.get(letterAttempt).getStyle().up = yellowKeyDrawableColor;
 										}
 									}
 								}
+							}
 
+							//WIN CONDITION
+							if (currentWordWithoutLatinChar.equals(wordAttempt)) {
+								spawnStatistics(true);
+
+								//TRY AGAIN CONDITION
+							} else if (newWords.contains(wordAttempt)) {
 								wordAttemptIndex++;
 								//GAME OVER CONDITION
 								if (wordAttemptIndex >= WORD_MAX) {
-									//lose
-									stage.addActor(wrongWordLabel);
-									wrongWordTimer = 1.5f;
+									spawnStatistics(false);
 									return;
 								}
 
@@ -355,6 +355,15 @@ public class TermoInfinito extends ApplicationAdapter {
 			});
 		}
 		gameTable.add(keyboardTable);
+	}
+
+	public void spawnStatistics(boolean win) {
+		if (win)
+			victoryMaybeLabel.setText("Você acertou!");
+		else
+			victoryMaybeLabel.setText("Você errou!");
+
+		stage.addActor(statisticsTable);
 	}
 
 	public String getCurrentWordWithoutLatinChar(String currentWord) {
