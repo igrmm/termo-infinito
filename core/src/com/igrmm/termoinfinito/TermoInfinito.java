@@ -28,6 +28,7 @@ public class TermoInfinito extends ApplicationAdapter {
 	public static final int WORD_MAX = 6;
 	public static final int LETTER_MAX = 5;
 	public static final String URL = "bit.ly/termo-infinito";
+	public static final String GREEN_SQUARE = "\uD83D\uDFE9", YELLOW_SQUARE = "\uD83D\uDFE8", BLACK_SQUARE = "\u2B1B";
 
 	private final Color labelFontColor = new Color(248f / 255, 248f / 255, 242f / 255, 1f);
 	private final Color keyFontColor = new Color(40f / 255, 42f / 255, 54f / 255, 1f);
