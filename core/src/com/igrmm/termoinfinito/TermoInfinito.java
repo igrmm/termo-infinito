@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -69,7 +70,6 @@ public class TermoInfinito extends ApplicationAdapter {
 		}
 		Collections.addAll(newWords, words.split("\\r?\\n"));
 		currentWord = newWords.get(new Random().nextInt(newWords.size()));
-		System.out.println(currentWord);
 
 		//make cool font
 		FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
@@ -101,6 +101,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		statisticsTable.add(statisticsRow).row();
 		statisticsRow.setBackground(statisticsBackgroundDrawableColor);
 		victoryMaybeLabel = new Label("", labelStyle);
+		victoryMaybeLabel.setAlignment(Align.center);
 		statisticsRow.add(victoryMaybeLabel).pad(Gdx.graphics.getWidth() * 0.05f).row();
 		playAgainButton = new TextButton("JOGAR NOVAMENTE", buttonStyle);
 		playAgainButton.pad(Gdx.graphics.getWidth() * 0.02f);
@@ -247,6 +248,35 @@ public class TermoInfinito extends ApplicationAdapter {
 		playAgainButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				Map<Integer, TextButton> wordAttempt;
+				for (int wordAttemptIndex : attempts.keySet()) {
+					wordAttempt = attempts.get(wordAttemptIndex);
+
+					for (int letterAttemptIndex : wordAttempt.keySet()) {
+						wordAttempt.get(letterAttemptIndex).setText(" ");
+						TextButton.TextButtonStyle buttonStyle = wordAttempt.get(letterAttemptIndex).getStyle();
+						buttonStyle.fontColor = keyFontColor;
+
+						//first row
+						if (wordAttemptIndex == 0) {
+							if (letterAttemptIndex == 0)
+								buttonStyle.up = keyUpDrawableColor;
+							else
+								buttonStyle.up = currentWordDrawableColor;
+
+							//other rows
+						} else buttonStyle.up = nextWordDrawableColor;
+					}
+				}
+
+				for (TextButton keyButton : keys.values()) {
+					keyButton.getStyle().up = keyUpDrawableColor;
+					keyButton.getStyle().fontColor = keyFontColor;
+				}
+
+				currentWord = newWords.get(new Random().nextInt(newWords.size()));
+				currentWordAttemptIndex = currentLetterAttemptIndex = 0;
+				statisticsTable.remove();
 			}
 		});
 
@@ -370,7 +400,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		if (win)
 			victoryMaybeLabel.setText("Você acertou!");
 		else
-			victoryMaybeLabel.setText("Você errou!");
+			victoryMaybeLabel.setText("Você errou!\nA palavra era:\n" + currentWord);
 
 		stage.addActor(statisticsTable);
 	}
