@@ -237,124 +237,126 @@ public class TermoInfinito extends ApplicationAdapter {
 					thirdRow.add(keyButton).width(btnWidth).height(btnHeight).pad(btnPad);
 				}
 			}
+		}
+		gameTable.add(keyboardTable);
+		handleInput();
+	}
 
+	public void handleInput() {
+		for (final String key : KEYS) {
+			final TextButton keyButton = keys.get(key);
 			keyButton.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					String key = String.valueOf(keyButton.getLabel().getText());
-					TextButton letterAttemptButton;
+					if (statisticsTable.getStage() != stage) {
+						TextButton letterAttemptButton;
 
-					//remove statistics table when key is pressed
-					if (statisticsTable.getStage() == stage) {
-						statisticsTable.remove();
-						return;
-					}
-
-					//PRESS BACKSPACE
-					if (key.equals("<=")) {
-						if (letterAttemptIndex > 0) {
-							if (letterAttemptIndex < LETTER_MAX) {
+						//PRESS BACKSPACE
+						if (key.equals("<=")) {
+							if (letterAttemptIndex > 0) {
+								if (letterAttemptIndex < LETTER_MAX) {
+									letterAttemptButton = attempts.get(wordAttemptIndex).get(letterAttemptIndex);
+									letterAttemptButton.getStyle().up = currentWordDrawableColor;
+								}
+								letterAttemptIndex--;
 								letterAttemptButton = attempts.get(wordAttemptIndex).get(letterAttemptIndex);
-								letterAttemptButton.getStyle().up = currentWordDrawableColor;
-							}
-							letterAttemptIndex--;
-							letterAttemptButton = attempts.get(wordAttemptIndex).get(letterAttemptIndex);
-							letterAttemptButton.setText(" ");
-							letterAttemptButton.getStyle().up = keyUpDrawableColor;
-						}
-
-						//PRESS ENTER
-					} else if (key.equals("ENTER")) {
-						if (letterAttemptIndex >= LETTER_MAX) {
-							String wordAttempt = "";
-							Map<Integer, TextButton> letterAttemptButtons = attempts.get(wordAttemptIndex);
-							for (TextButton letterButton : letterAttemptButtons.values()) {
-								wordAttempt = wordAttempt.concat(String.valueOf(letterButton.getLabel().getText()));
+								letterAttemptButton.setText(" ");
+								letterAttemptButton.getStyle().up = keyUpDrawableColor;
 							}
 
-							wordAttempt = wordAttempt.toLowerCase();
-							String currentWordWithoutLatinChar = getCurrentWordWithoutLatinChar(currentWord);
+							//PRESS ENTER
+						} else if (key.equals("ENTER")) {
+							if (letterAttemptIndex >= LETTER_MAX) {
+								String wordAttempt = "";
+								Map<Integer, TextButton> letterAttemptButtons = attempts.get(wordAttemptIndex);
+								for (TextButton letterButton : letterAttemptButtons.values()) {
+									wordAttempt = wordAttempt.concat(String.valueOf(letterButton.getLabel().getText()));
+								}
 
-							//paint buttons with colors
-							for (int i = 0; i < LETTER_MAX; i++) {
-								for (int j = 0; j < LETTER_MAX; j++) {
-									Drawable buttonColor = letterAttemptButtons.get(i).getStyle().up;
-									String letterAttempt = String.valueOf(letterAttemptButtons.get(i).getText());
+								wordAttempt = wordAttempt.toLowerCase();
+								String currentWordWithoutLatinChar = getCurrentWordWithoutLatinChar(currentWord);
 
-									if (buttonColor == currentWordDrawableColor) {
-										letterAttemptButtons.get(i).getStyle().up = wrongKeyDrawableColor;
-										letterAttemptButtons.get(i).getStyle().fontColor = wrongKeyFontColor;
-										keys.get(letterAttempt).getStyle().up = wrongKeyDrawableColor;
-										keys.get(letterAttempt).getStyle().fontColor = wrongKeyFontColor;
-									}
+								//paint buttons with colors
+								for (int i = 0; i < LETTER_MAX; i++) {
+									for (int j = 0; j < LETTER_MAX; j++) {
+										Drawable buttonColor = letterAttemptButtons.get(i).getStyle().up;
+										String letterAttempt = String.valueOf(letterAttemptButtons.get(i).getText());
 
-									if (wordAttempt.charAt(i) == currentWordWithoutLatinChar.charAt(j)) {
-										letterAttemptButtons.get(i).getStyle().fontColor = keyFontColor;
-										keys.get(letterAttempt).getStyle().fontColor = keyFontColor;
-										if (i == j) {
-											letterAttemptButtons.get(i).getStyle().up = greenKeyDrawableColor;
-											keys.get(letterAttempt).getStyle().up = greenKeyDrawableColor;
-										} else if (buttonColor != greenKeyDrawableColor) {
-											letterAttemptButtons.get(i).getStyle().up = yellowKeyDrawableColor;
-											keys.get(letterAttempt).getStyle().up = yellowKeyDrawableColor;
+										if (buttonColor == currentWordDrawableColor) {
+											letterAttemptButtons.get(i).getStyle().up = wrongKeyDrawableColor;
+											letterAttemptButtons.get(i).getStyle().fontColor = wrongKeyFontColor;
+											keys.get(letterAttempt).getStyle().up = wrongKeyDrawableColor;
+											keys.get(letterAttempt).getStyle().fontColor = wrongKeyFontColor;
+										}
+
+										if (wordAttempt.charAt(i) == currentWordWithoutLatinChar.charAt(j)) {
+											letterAttemptButtons.get(i).getStyle().fontColor = keyFontColor;
+											keys.get(letterAttempt).getStyle().fontColor = keyFontColor;
+											if (i == j) {
+												letterAttemptButtons.get(i).getStyle().up = greenKeyDrawableColor;
+												keys.get(letterAttempt).getStyle().up = greenKeyDrawableColor;
+											} else if (buttonColor != greenKeyDrawableColor) {
+												letterAttemptButtons.get(i).getStyle().up = yellowKeyDrawableColor;
+												keys.get(letterAttempt).getStyle().up = yellowKeyDrawableColor;
+											}
 										}
 									}
 								}
-							}
 
-							//WIN CONDITION
-							if (currentWordWithoutLatinChar.equals(wordAttempt)) {
-								spawnStatistics(true);
+								//WIN CONDITION
+								if (currentWordWithoutLatinChar.equals(wordAttempt)) {
+									spawnStatistics(true);
 
-								//TRY AGAIN CONDITION
-							} else if (newWords.contains(wordAttempt)) {
-								wordAttemptIndex++;
-								//GAME OVER CONDITION
-								if (wordAttemptIndex >= WORD_MAX) {
-									spawnStatistics(false);
-									return;
-								}
+									//TRY AGAIN CONDITION
+								} else if (newWords.contains(wordAttempt)) {
+									wordAttemptIndex++;
 
-								letterAttemptIndex = 0;
-								letterAttemptButtons = attempts.get(wordAttemptIndex);
-								for (int i = 0; i < letterAttemptButtons.keySet().size(); i++) {
-									letterAttemptButton = attempts.get(wordAttemptIndex).get(i);
-									if (i == 0) {
-										letterAttemptButton.getStyle().up = keyUpDrawableColor;
-									} else {
-										letterAttemptButton.getStyle().up = currentWordDrawableColor;
+									//GAME OVER CONDITION
+									if (wordAttemptIndex >= WORD_MAX) {
+										spawnStatistics(false);
+										return;
 									}
+
+									letterAttemptIndex = 0;
+									letterAttemptButtons = attempts.get(wordAttemptIndex);
+									for (int i = 0; i < letterAttemptButtons.keySet().size(); i++) {
+										letterAttemptButton = attempts.get(wordAttemptIndex).get(i);
+										if (i == 0) {
+											letterAttemptButton.getStyle().up = keyUpDrawableColor;
+										} else {
+											letterAttemptButton.getStyle().up = currentWordDrawableColor;
+										}
+									}
+
+									//WORD IS NOT VALID
+								} else {
+									stage.addActor(wrongWordLabel);
+									wrongWordTimer = 1.5f;
 								}
 
-								//WORD IS NOT VALID
 							} else {
+								//words must have 5 letters
 								stage.addActor(wrongWordLabel);
 								wrongWordTimer = 1.5f;
 							}
 
+							//PRESS OTHER KEYS
 						} else {
-							//words must have 5 letters
-							stage.addActor(wrongWordLabel);
-							wrongWordTimer = 1.5f;
-						}
-
-						//PRESS OTHER KEYS
-					} else {
-						if (letterAttemptIndex < LETTER_MAX) {
-							letterAttemptButton = attempts.get(wordAttemptIndex).get(letterAttemptIndex);
-							letterAttemptButton.setText(String.valueOf(keyButton.getLabel().getText()));
-							letterAttemptButton.getStyle().up = currentWordDrawableColor;
-							letterAttemptIndex++;
 							if (letterAttemptIndex < LETTER_MAX) {
 								letterAttemptButton = attempts.get(wordAttemptIndex).get(letterAttemptIndex);
-								letterAttemptButton.getStyle().up = keyUpDrawableColor;
+								letterAttemptButton.setText(key);
+								letterAttemptButton.getStyle().up = currentWordDrawableColor;
+								letterAttemptIndex++;
+								if (letterAttemptIndex < LETTER_MAX) {
+									letterAttemptButton = attempts.get(wordAttemptIndex).get(letterAttemptIndex);
+									letterAttemptButton.getStyle().up = keyUpDrawableColor;
+								}
 							}
 						}
 					}
 				}
 			});
 		}
-		gameTable.add(keyboardTable);
 	}
 
 	public void spawnStatistics(boolean win) {
