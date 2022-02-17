@@ -49,6 +49,7 @@ public class TermoInfinito extends ApplicationAdapter {
 	private Label victoryMaybeLabel;
 	private TextButton playAgainButton;
 	private TextButton shareButton;
+	private String shareMessage;
 	private BitmapFont font;
 	private final Map<Integer, Map<Integer, TextButton>> attempts = new HashMap<>();
 	private final Map<String, TextButton> keys = new HashMap<>();
@@ -73,7 +74,6 @@ public class TermoInfinito extends ApplicationAdapter {
 		}
 		Collections.addAll(newWords, words.split("\\r?\\n"));
 		currentWord = newWords.get(new Random().nextInt(newWords.size()));
-		System.out.println(currentWord);
 
 		//make cool font
 		FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
@@ -255,6 +255,7 @@ public class TermoInfinito extends ApplicationAdapter {
 		shareButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				Gdx.app.getClipboard().setContents(shareMessage);
 				shareButton.setText("COPIADO");
 			}
 		});
@@ -414,10 +415,36 @@ public class TermoInfinito extends ApplicationAdapter {
 	}
 
 	public void spawnStatistics(boolean win) {
-		if (win)
+		shareMessage = "#termoinfinito\n\n";
+		Map<Integer, TextButton> wordAttempt;
+		for (int wordAttemptIndex : attempts.keySet()) {
+			wordAttempt = attempts.get(wordAttemptIndex);
+			for (int letterAttemptIndex : wordAttempt.keySet()) {
+				TextButton.TextButtonStyle buttonStyle = wordAttempt.get(letterAttemptIndex).getStyle();
+
+				if (buttonStyle.up == greenKeyDrawableColor) {
+					shareMessage = shareMessage.concat(GREEN_SQUARE);
+
+				} else if (buttonStyle.up == yellowKeyDrawableColor) {
+					shareMessage = shareMessage.concat(YELLOW_SQUARE);
+
+				} else if (buttonStyle.up == wrongKeyDrawableColor) {
+					shareMessage = shareMessage.concat(BLACK_SQUARE);
+
+				} else break;
+			}
+			shareMessage = shareMessage.concat("\n");
+		}
+		shareMessage = shareMessage.concat(URL);
+
+		//WIN
+		if (win) {
 			victoryMaybeLabel.setText("Você acertou!");
-		else
+
+			//LOSE
+		} else {
 			victoryMaybeLabel.setText("Você errou!\nA palavra era:\n" + currentWord);
+		}
 
 		stage.addActor(statisticsTable);
 	}
