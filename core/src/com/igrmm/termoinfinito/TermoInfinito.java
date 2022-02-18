@@ -292,6 +292,7 @@ public class TermoInfinito extends ApplicationAdapter {
 
 				currentWord = newWords.get(new Random().nextInt(newWords.size()));
 				currentWordAttemptIndex = currentLetterAttemptIndex = 0;
+				shareButton.setText("COMPARTILHAR");
 				statisticsTable.remove();
 			}
 		});
