@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.List;
 
 public class TermoInfinito extends ApplicationAdapter {
+	public static final String VERSION = "0.1";
 	public static final String[] KEYS = {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H",
 			"J", "K", "L", "<=", "Z", "X", "C", "V", "B", "N", "M", "ENTER"};
 	public static final int WORD_MAX = 6;
