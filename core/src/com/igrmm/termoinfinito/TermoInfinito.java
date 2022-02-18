@@ -47,6 +47,7 @@ public class TermoInfinito extends ApplicationAdapter {
 	private TextureRegionDrawable greenKeyDrawableColor;
 	private TextureRegionDrawable yellowKeyDrawableColor;
 	private TextureRegionDrawable currentWordDrawableColor;
+	private TextureRegionDrawable currentLetterDrawableColor;
 	private TextureRegionDrawable nextWordDrawableColor;
 
 	private Stage stage;
@@ -157,7 +158,7 @@ public class TermoInfinito extends ApplicationAdapter {
 				//verify if is word or letter attempt
 				if (i == 0) {
 					if (j == 0) {
-						attemptButtonStyle.up = keyUpDrawableColor;
+						attemptButtonStyle.up = currentLetterDrawableColor;
 					} else {
 						attemptButtonStyle.up = currentWordDrawableColor;
 					}
@@ -326,7 +327,7 @@ public class TermoInfinito extends ApplicationAdapter {
 								currentLetterAttemptIndex--;
 								letterAttemptButton = attempts.get(currentWordAttemptIndex).get(currentLetterAttemptIndex);
 								letterAttemptButton.setText(" ");
-								letterAttemptButton.getStyle().up = keyUpDrawableColor;
+								letterAttemptButton.getStyle().up = currentLetterDrawableColor;
 							}
 
 							//PRESS ENTER
@@ -388,7 +389,7 @@ public class TermoInfinito extends ApplicationAdapter {
 										for (int i = 0; i < letterAttemptButtons.keySet().size(); i++) {
 											letterAttemptButton = attempts.get(currentWordAttemptIndex).get(i);
 											if (i == 0) {
-												letterAttemptButton.getStyle().up = keyUpDrawableColor;
+												letterAttemptButton.getStyle().up = currentLetterDrawableColor;
 											} else {
 												letterAttemptButton.getStyle().up = currentWordDrawableColor;
 											}
@@ -416,7 +417,7 @@ public class TermoInfinito extends ApplicationAdapter {
 								currentLetterAttemptIndex++;
 								if (currentLetterAttemptIndex < LETTER_MAX) {
 									letterAttemptButton = attempts.get(currentWordAttemptIndex).get(currentLetterAttemptIndex);
-									letterAttemptButton.getStyle().up = keyUpDrawableColor;
+									letterAttemptButton.getStyle().up = currentLetterDrawableColor;
 								}
 							}
 						}
@@ -511,9 +512,8 @@ public class TermoInfinito extends ApplicationAdapter {
 		pixmap.setColor(255f / 255, 184f / 255, 108f / 255, 1f);
 		pixmap.fill();
 		yellowKeyDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
-		pixmap.setColor(139f / 255, 233f / 255, 253f / 255, 1f);
-		pixmap.fill();
-		currentWordDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
+		currentWordDrawableColor = new TextureRegionDrawable(new Texture(Gdx.files.internal("currentWordDrawable.png")));
+		currentLetterDrawableColor = new TextureRegionDrawable(new Texture(Gdx.files.internal("currentLetterDrawable.png")));
 		pixmap.setColor(98f / 255, 114f / 255, 164f / 255, 1f);
 		pixmap.fill();
 		nextWordDrawableColor = new TextureRegionDrawable(new Texture(pixmap));
