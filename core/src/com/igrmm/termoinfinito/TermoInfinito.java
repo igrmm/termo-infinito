@@ -2,6 +2,7 @@ package com.igrmm.termoinfinito;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -30,6 +31,9 @@ public class TermoInfinito extends ApplicationAdapter {
 	public static final int LETTER_MAX = 5;
 	public static final String URL = "bit.ly/termo-infinito";
 	public static final String GREEN_SQUARE = "\uD83D\uDFE9", YELLOW_SQUARE = "\uD83D\uDFE8", BLACK_SQUARE = "\u2B1B";
+
+	private Preferences save;
+	FileHandle newWordsFileHandle;
 
 	private final Color labelFontColor = new Color(248f / 255, 248f / 255, 242f / 255, 1f);
 	private final Color keyFontColor = new Color(40f / 255, 42f / 255, 54f / 255, 1f);
@@ -63,9 +67,15 @@ public class TermoInfinito extends ApplicationAdapter {
 
 	@Override
 	public void create() {
+		save = Gdx.app.getPreferences("termo.save");
+		if (!save.contains("version")) {
+			save.putString("version", VERSION);
+			save.flush();
+		}
+
 		//make wordlists
 		String words;
-		FileHandle newWordsFileHandle = Gdx.files.local("newWords");
+		newWordsFileHandle = Gdx.files.local("newWords");
 		if (!newWordsFileHandle.exists()) {
 			FileHandle wordListFileHandle = Gdx.files.internal("5wordlist");
 			words = wordListFileHandle.readString("UTF-8");
@@ -417,7 +427,36 @@ public class TermoInfinito extends ApplicationAdapter {
 	}
 
 	public void spawnStatistics(boolean win) {
+		int games = save.getInteger("games", 0);
+		int wins = save.getInteger("wins", 0);
+		int losses = save.getInteger("losses", 0);
+
+		games++;
+		String percentString;
+
+		//WIN
+		if (win) {
+			wins++;
+			float percent = wins / (float) games * 100f;
+			percentString = String.format("%.01f", percent);
+			victoryMaybeLabel.setText("Você acertou!\n#" + games + " (" + percentString + "%)");
+
+			//LOSE
+		} else {
+			losses++;
+			float percent = wins / (float) games * 100f;
+			percentString = String.format("%.01f", percent);
+			victoryMaybeLabel.setText("Você errou!\nA palavra era:\n" + currentWord + "\n#" + games + " (" + percentString + "%)");
+		}
+
+		save.putInteger("games", games);
+		save.putInteger("wins", wins);
+		save.putInteger("losses", losses);
+		save.flush();
+
 		shareMessage = "#termoinfinito\n\n";
+		shareMessage = shareMessage.concat("#" + games + " (" + percentString + "%)\n\n");
+
 		Map<Integer, TextButton> wordAttempt;
 		for (int wordAttemptIndex : attempts.keySet()) {
 			wordAttempt = attempts.get(wordAttemptIndex);
@@ -437,17 +476,7 @@ public class TermoInfinito extends ApplicationAdapter {
 			}
 			shareMessage = shareMessage.concat("\n");
 		}
-		shareMessage = shareMessage.concat(URL);
-
-		//WIN
-		if (win) {
-			victoryMaybeLabel.setText("Você acertou!");
-
-			//LOSE
-		} else {
-			victoryMaybeLabel.setText("Você errou!\nA palavra era:\n" + currentWord);
-		}
-
+		shareMessage = shareMessage.concat("\n" + URL);
 		stage.addActor(statisticsTable);
 	}
 
